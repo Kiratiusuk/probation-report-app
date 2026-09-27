@@ -5,47 +5,60 @@ import io
 # 1. ตั้งค่าหน้าเพจ
 st.set_page_config(page_title="ระบบงานเอกสารจิตเวช", layout="centered", page_icon="🏥")
 
-# --- CSS ตกแต่งธีมให้สวยงามและเป็นทางการ (บังคับสว่าง-สีกรมท่า) ---
+# --- CSS ตกแต่งธีมสีดำ-น้ำเงิน (Dark Navy Elegant) ---
 st.markdown("""
 <style>
-    /* ปรับพื้นหลังของโปรแกรมให้เป็นสีสว่าง เพื่อให้สีกรมท่าเด่นขึ้น */
+    /* บังคับพื้นหลังสีดำ/กรมท่าเข้ม และตัวหนังสือสีสว่าง */
     .stApp {
-        background-color: #f4f7f6;
+        background-color: #0b0f19;
+        color: #e2e8f0;
     }
     /* ปรับแต่งหัวข้อ */
-    .main-title { color: #002244; text-align: center; font-weight: 800; font-size: 32px; margin-bottom: 5px; }
-    .sub-title { color: #003366; text-align: center; font-size: 18px; margin-bottom: 30px; font-weight: 600; }
-    hr { border-top: 2px solid #003366; }
+    .main-title { 
+        color: #60a5fa; 
+        text-align: center; 
+        font-weight: bold; 
+        margin-bottom: 5px; 
+    }
+    .sub-title { 
+        color: #94a3b8; 
+        text-align: center; 
+        font-size: 18px; 
+        margin-bottom: 30px; 
+    }
+    hr { border-top: 1px solid #1e3a8a; }
     
-    /* ปรับแต่งปุ่มกด */
+    /* ปรับแต่งปุ่มกดทั่วไป */
     div.stButton > button {
         border-radius: 8px;
-        border: 2px solid #003366;
-        color: #003366;
-        background-color: #ffffff;
-        font-weight: bold;
+        border: 1px solid #1e3a8a;
+        color: #bfdbfe;
+        background-color: #0f172a;
         transition: 0.3s;
     }
     div.stButton > button:hover {
-        background-color: #003366;
+        background-color: #1e3a8a;
         color: white;
+        border: 1px solid #3b82f6;
+        box-shadow: 0px 4px 10px rgba(30, 58, 138, 0.6);
         transform: scale(1.02);
     }
-    /* ปรับแต่งปุ่มหลัก (ปุ่มสร้างเอกสาร) ให้เป็นทึบ */
+    /* ปรับแต่งปุ่มหลัก (ปุ่มสร้างเอกสาร) ให้เป็นสีน้ำเงินเด่นชัด */
     div.stButton > button[kind="primary"] {
-        background-color: #003366;
+        background-color: #1d4ed8;
         color: white;
         border: none;
     }
     div.stButton > button[kind="primary"]:hover {
-        background-color: #001a33;
+        background-color: #2563eb;
+        box-shadow: 0px 4px 15px rgba(37, 99, 235, 0.4);
     }
     
     /* ส่วนของเครดิตด้านล่างสุด */
     .footer {
         text-align: center;
         font-size: 13px;
-        color: #666666;
+        color: #64748b;
         margin-top: 60px;
         margin-bottom: 20px;
     }
@@ -65,7 +78,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # หน้าที่ 1: เมนูหลัก 5 หมวดหมู่
 # ==========================================
 if st.session_state.step == 1:
-    st.markdown("<h5 style='text-align: center; color: #003366; margin-bottom: 20px;'>โปรดเลือกหน่วยงานหรือประเภทเอกสาร</h5>", unsafe_allow_html=True)
+    st.markdown("<h5 style='text-align: center; color: #60a5fa; margin-bottom: 20px;'>โปรดเลือกหน่วยงานหรือประเภทเอกสาร</h5>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -104,25 +117,23 @@ elif st.session_state.step == 2:
     if st.button("⬅️ กลับหน้าเมนูหลัก"):
         st.session_state.step = 1; st.rerun()
         
-    st.markdown(f"<h4 style='color: #003366; text-align: center;'>หมวด: {st.session_state.category}</h4>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='color: #60a5fa; text-align: center;'>หมวด: {st.session_state.category}</h4>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # ---------------------------------------------
-    # ⚖️ 2.1 หมวดศาล (แก้ไขล่าสุด)
+    # ⚖️ 2.1 หมวดศาล
     # ---------------------------------------------
     if st.session_state.category == "ศาล":
         with st.container(border=True):
-            st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (ศาล)</h5>", unsafe_allow_html=True)
+            st.markdown("<h5 style='color: #60a5fa;'>บันทึกข้อมูล (ศาล)</h5>", unsafe_allow_html=True)
             
             month_year_court = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน 2569")
             ref_number_court = st.text_input("๒. เลขหนังสือศาล", placeholder="เช่น (ป) ๑๗๒๑")
             
-            # แก้ไขชื่อหัวข้อที่ 3 ตามที่ร้องขอ
             ref_date_court = st.text_input("๓. หนังสือศาลลงวันที่", placeholder="เช่น ๒๐ พฤษภาคม ๒๕๖๘")
             patient_name_court = st.text_input("๔. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ หยุดเสพ")
             
             st.markdown("---")
-            # เพิ่ม index=None เพื่อให้ช่องเริ่มต้นเป็นค่าว่าง
             section_court = st.selectbox("๕. มาตรา", [
                 "166", 
                 "168", 
@@ -131,7 +142,6 @@ elif st.session_state.step == 2:
             ], index=None, placeholder="-- โปรดเลือกมาตรา --")
             
             st.markdown("---")
-            # เพิ่ม index=None เพื่อให้ช่องเริ่มต้นเป็นค่าว่าง
             status_court = st.selectbox("๖. สถานะการบำบัด", [
                 "บำบัดครบ", 
                 "บำบัดไม่ครบ", 
@@ -151,7 +161,6 @@ elif st.session_state.step == 2:
             submit_btn_court = st.button("📄 สร้างเอกสาร Word", type="primary", use_container_width=True)
 
         if submit_btn_court:
-            # ตรวจสอบว่าผู้ใช้เลือกข้อมูลในข้อ 5 และ 6 หรือยัง
             if section_court is None or status_court is None:
                 st.warning("⚠️ โปรดเลือก 'มาตรา' และ 'สถานะการบำบัด' ให้ครบถ้วนก่อนกดสร้างเอกสารครับ")
             else:
@@ -199,7 +208,7 @@ elif st.session_state.step == 2:
         
         if sub_category == "คุมประพฤติจังหวัดนนทบุรี":
             with st.container(border=True):
-                st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (จังหวัดนนทบุรี)</h5>", unsafe_allow_html=True)
+                st.markdown("<h5 style='color: #60a5fa;'>บันทึกข้อมูล (จังหวัดนนทบุรี)</h5>", unsafe_allow_html=True)
                 
                 month_year = st.text_input("๑. เดือนและปี หนังสือ", placeholder="เช่น กันยายน ๒๕๖๙")
                 ref_number = st.text_input("๒. อ้างอิงหนังสือคุมประพฤติเลขที่ นบ.๐๐๒๕ /", placeholder="เช่น ๐๐๑๒")
@@ -286,7 +295,7 @@ elif st.session_state.step == 2:
 
         elif sub_category == "คุมประพฤติอื่น":
             with st.container(border=True):
-                st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (คุมประพฤติจังหวัดอื่น)</h5>", unsafe_allow_html=True)
+                st.markdown("<h5 style='color: #60a5fa;'>บันทึกข้อมูล (คุมประพฤติจังหวัดอื่น)</h5>", unsafe_allow_html=True)
                 
                 agency_name = st.text_input("๑. หน่วยงานที่ส่งมา", placeholder="เช่น คุมประพฤติกรุงเทพมหานคร ๒")
                 month_year_other = st.text_input("๒. เดือนและปี หนังสือ", placeholder="เช่น กันยายน ๒๕๖๙", key="month_other")
@@ -380,7 +389,7 @@ elif st.session_state.step == 2:
     # ---------------------------------------------
     elif st.session_state.category == "หนังสือรับรองการบำบัด":
         with st.container(border=True):
-            st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (หนังสือรับรองการบำบัด)</h5>", unsafe_allow_html=True)
+            st.markdown("<h5 style='color: #60a5fa;'>บันทึกข้อมูล (หนังสือรับรองการบำบัด)</h5>", unsafe_allow_html=True)
             
             col1, col2 = st.columns([1, 1])
             with col1:
@@ -470,4 +479,4 @@ elif st.session_state.step == 2:
 # ==========================================
 # เครดิตด้านล่างสุดของโปรแกรม
 # ==========================================
-st.markdown("<div class='footer'>พัฒนาโดยกลุ่มงานจิตเวชและยาเสพติด</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>พัฒนาโดยกลุ่มงานจิตเวชและยาเสพติด โรงพยาบาลพระนั่งเกล้า</div>", unsafe_allow_html=True)
