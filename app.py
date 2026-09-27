@@ -89,7 +89,7 @@ elif st.session_state.step == 2:
                 ref_date = st.text_input("๓. อ้างอิงหนังสือคุมประพฤติวันที่", placeholder="เช่น ๕ ตุลาคม ๒๕๖๙")
                 patient_name = st.text_input("๔. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ บำบัด")
                 
-                # ข้อ 5. สาเหตุส่งเข้ารับการบำบัดรักษา (ที่เพิ่มใหม่)
+                # ข้อ 5. สาเหตุส่งเข้ารับการบำบัดรักษา
                 st.markdown("---")
                 referral_reason = st.selectbox("๕. สาเหตุส่งเข้ารับการบำบัดรักษา", ["ตามคำพิพากษา", "แบบสมัครใจ", "อื่นๆ (ระบุเอง)"])
                 custom_reason = ""
@@ -146,7 +146,8 @@ elif st.session_state.step == 2:
                 if referral_reason == "ตามคำพิพากษา":
                     reason_text_final = "ตามคำพิพากษาของศาล"
                 elif referral_reason == "แบบสมัครใจ":
-                    reason_text_final = "ยาเสพติดให้โทษแบบสมัครใจ"
+                    # แก้ไขข้อความตรงนี้ตามที่คุณแจ้งมาครับ
+                    reason_text_final = "การติดยาเสพติดให้โทษแบบสมัครใจ"
                 else:
                     reason_text_final = custom_reason
 
@@ -173,7 +174,7 @@ elif st.session_state.step == 2:
                         "เลขหนังสือคุมประพฤติ": ref_number,
                         "ลงวันที่": ref_date,
                         "ชื่อผู้รับการบำบัด": patient_name,
-                        "สาเหตุส่งเข้ารับการบำบัดรักษา": reason_text_final  # <-- ส่งค่าใหม่ไปที่ Word
+                        "สาเหตุส่งเข้ารับการบำบัดรักษา": reason_text_final  
                     }
                     
                     # ถ้าเป็น Refer ส่ง 2 ตัวนี้ไปเพิ่ม ถ้าไม่ใช่ ส่งสถานะบำบัดไป
