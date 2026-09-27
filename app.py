@@ -89,9 +89,16 @@ elif st.session_state.step == 2:
                 ref_date = st.text_input("๓. อ้างอิงหนังสือคุมประพฤติวันที่", placeholder="เช่น ๕ ตุลาคม ๒๕๖๙")
                 patient_name = st.text_input("๔. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ บำบัด")
                 
-                # ข้อ 5. สถานะการบำบัด
+                # ข้อ 5. สาเหตุส่งเข้ารับการบำบัดรักษา (ที่เพิ่มใหม่)
                 st.markdown("---")
-                status = st.selectbox("๕. สถานะการบำบัด", [
+                referral_reason = st.selectbox("๕. สาเหตุส่งเข้ารับการบำบัดรักษา", ["ตามคำพิพากษา", "แบบสมัครใจ", "อื่นๆ (ระบุเอง)"])
+                custom_reason = ""
+                if referral_reason == "อื่นๆ (ระบุเอง)":
+                    custom_reason = st.text_input("โปรดระบุสาเหตุด้วยตนเอง:", placeholder="พิมพ์สาเหตุที่นี่...")
+
+                # ข้อ 6. สถานะการบำบัด
+                st.markdown("---")
+                status = st.selectbox("๖. สถานะการบำบัด", [
                     "บำบัดครบ", 
                     "บำบัดไม่ครบ", 
                     "ไม่มารายงานตัว", 
@@ -133,7 +140,17 @@ elif st.session_state.step == 2:
 
             # เมื่อกดปุ่มสร้างเอกสาร
             if submit_btn:
-                # 1. จัดเตรียมข้อความสถานะ และ เลือกไฟล์ต้นแบบ
+                
+                # --- จัดการข้อความ สาเหตุที่เข้ารับการบำบัด ---
+                reason_text_final = ""
+                if referral_reason == "ตามคำพิพากษา":
+                    reason_text_final = "ตามคำพิพากษาของศาล"
+                elif referral_reason == "แบบสมัครใจ":
+                    reason_text_final = "ยาเสพติดให้โทษแบบสมัครใจ"
+                else:
+                    reason_text_final = custom_reason
+
+                # --- จัดการข้อความ สถานะการบำบัด และ เลือกไฟล์ต้นแบบ ---
                 template_name = "คุมประพฤติรวม.docx"
                 status_text = ""
                 
@@ -155,10 +172,11 @@ elif st.session_state.step == 2:
                         "เดือนและปีหนังสือออก": month_year,
                         "เลขหนังสือคุมประพฤติ": ref_number,
                         "ลงวันที่": ref_date,
-                        "ชื่อผู้รับการบำบัด": patient_name
+                        "ชื่อผู้รับการบำบัด": patient_name,
+                        "สาเหตุส่งเข้ารับการบำบัดรักษา": reason_text_final  # <-- ส่งค่าใหม่ไปที่ Word
                     }
                     
-                    # ถ้าเป็น Refer ส่ง 2 ตัวนี้ไป ถ้าไม่ใช่ ส่งสถานะบำบัดไป
+                    # ถ้าเป็น Refer ส่ง 2 ตัวนี้ไปเพิ่ม ถ้าไม่ใช่ ส่งสถานะบำบัดไป
                     if status == "ส่งตัวไปรักษาต่อ":
                         context["ส่งตัวไปยัง"] = send_to
                         context["สาเหตุการส่งตัว"] = refer_reason
