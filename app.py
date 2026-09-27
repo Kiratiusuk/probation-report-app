@@ -57,6 +57,7 @@ if st.session_state.step == 1:
             st.session_state.step = 2; st.rerun()
     with col6:
         st.markdown("<div style='text-align: center; font-size: 50px;'>📑</div>", unsafe_allow_html=True)
+        # แก้ไขชื่อปุ่มหมวด 5 ตามที่ต้องการ
         if st.button("๕. หนังสือรับรองการบำบัด(ม.113/114)", use_container_width=True):
             st.session_state.category = "หนังสือรับรองการบำบัด"
             st.session_state.step = 2; st.rerun()
@@ -72,85 +73,9 @@ elif st.session_state.step == 2:
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # ---------------------------------------------
-    # ⚖️ 2.1 หมวดศาล
+    # 🛡️ 2.1 หมวดคุมประพฤติ
     # ---------------------------------------------
-    if st.session_state.category == "ศาล":
-        with st.container(border=True):
-            st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (ศาล)</h5>", unsafe_allow_html=True)
-            
-            month_year_court = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน 2569")
-            ref_number_court = st.text_input("๒. เลขหนังสือศาล", placeholder="เช่น (ป) ๑๗๒๑")
-            ref_date_court = st.text_input("๓. ลงวันที่", placeholder="เช่น ๒๐ พฤษภาคม ๒๕๖๘")
-            patient_name_court = st.text_input("๔. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ หยุดเสพ")
-            
-            st.markdown("---")
-            section_court = st.selectbox("๕. มาตรา", [
-                "166", 
-                "168", 
-                "166 ประกอบประมวลกฎหมายอาญามาตรา ๕๖", 
-                "168 ประกอบประมวลกฎหมายอาญามาตรา ๕๖"
-            ])
-            
-            st.markdown("---")
-            status_court = st.selectbox("๖. สถานะการบำบัด", [
-                "บำบัดครบ", 
-                "บำบัดไม่ครบ", 
-                "ไม่มารายงานตัว", 
-                "ขอย้ายสถานบำบัด"
-            ])
-            
-            num_times_court, hospital_name_court, reason_court = "", "", ""
-            
-            if status_court == "ขอย้ายสถานบำบัด":
-                st.info("ระบุข้อมูลการย้ายสถานบำบัด:")
-                num_times_court = st.text_input("- ได้เข้ารับการฟื้นฟูฯ จำนวนกี่ครั้ง (ใส่เฉพาะตัวเลข)", placeholder="เช่น ๔", key="num_court")
-                hospital_name_court = st.text_input("- ขอย้ายไปที่ไหน (ชื่อ รพ. หรือ สถานที่บำบัด และ จังหวัด)", placeholder="เช่น โรงพยาบาลสมเด็จพระเจ้าตากสินมหาราช จังหวัดตาก", key="hosp_court")
-                reason_court = st.text_input("- เนื่องจากอะไร", placeholder="เช่น ย้ายสถานที่ทำงาน", key="reason_court")
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            submit_btn_court = st.button("📄 สร้างเอกสาร Word", type="primary", use_container_width=True)
-
-        if submit_btn_court:
-            status_text_court = ""
-            if status_court == "บำบัดครบ":
-                status_text_court = "ได้มารายงานตัวเพื่อเข้ารับการบำบัดรักษาและเข้ารับการฟื้นฟูฯ ครบตามโปรแกรมที่กำหนด"
-            elif status_court == "บำบัดไม่ครบ":
-                status_text_court = "ได้มารายงานตัวเพื่อเข้ารับการบำบัดรักษาและเข้ารับการฟื้นฟูฯ แต่ไม่ครบตามโปรแกรมที่กำหนด"
-            elif status_court == "ไม่มารายงานตัว":
-                status_text_court = "ไม่ได้มารายงานตัวเพื่อเข้ารับการรักษาและเข้ารับการฟื้นฟูฯ ตามโปรมแกรมที่กำหนด"
-            elif status_court == "ขอย้ายสถานบำบัด":
-                status_text_court = f"ได้เข้ารับการฟื้นฟูฯ จำนวน {num_times_court} ครั้ง และแจ้งขอย้ายสถานบำบัดไปยัง{hospital_name_court} เนื่องจาก{reason_court}"
-            
-            template_name_court = "ศาลรวม.docx"
-            try:
-                doc = DocxTemplate(template_name_court)
-                context_court = {
-                    "เดือนและปีหนังสือออก": month_year_court,
-                    "เลขหนังสือศาล": ref_number_court,
-                    "ลงวันที่": ref_date_court,
-                    "ชื่อผู้รับการบำบัด": patient_name_court,
-                    "มาตรา": section_court,
-                    "สถานะการบำบัด": status_text_court
-                }
-                
-                doc.render(context_court)
-                bio_court = io.BytesIO()
-                doc.save(bio_court)
-                
-                st.success(f"✅ สร้างเอกสาร '{status_court}' ของ {patient_name_court} สำเร็จ!")
-                st.download_button(
-                    label="⬇️ ดาวน์โหลดไฟล์เอกสาร (Word)", data=bio_court.getvalue(),
-                    file_name=f"ศาล_{status_court}_{patient_name_court}.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    type="primary"
-                )
-            except Exception as e:
-                st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_court}' หรือมีข้อผิดพลาด: {str(e)}")
-
-    # ---------------------------------------------
-    # 🛡️ 2.2 หมวดคุมประพฤติ
-    # ---------------------------------------------
-    elif st.session_state.category == "คุมประพฤติ":
+    if st.session_state.category == "คุมประพฤติ":
         sub_category = st.radio("เลือกหน่วยงานปลายทาง:", ["คุมประพฤติจังหวัดนนทบุรี", "คุมประพฤติอื่น"], horizontal=True)
         
         # ก. คุมประพฤตินนทบุรี
@@ -334,12 +259,13 @@ elif st.session_state.step == 2:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_other}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # 📑 2.3 หมวดหนังสือรับรองการบำบัด (ม.113/114)
+    # 📑 2.2 หมวดหนังสือรับรองการบำบัด (ม.113/114) (ส่วนที่เพิ่มใหม่)
     # ---------------------------------------------
     elif st.session_state.category == "หนังสือรับรองการบำบัด":
         with st.container(border=True):
             st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (หนังสือรับรองการบำบัด)</h5>", unsafe_allow_html=True)
             
+            # แบ่งเป็น 2 คอลัมน์สำหรับข้อมูลทั่วไป
             col1, col2 = st.columns([1, 1])
             with col1:
                 month_year_cert = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน ๒๕๖๙")
@@ -356,6 +282,7 @@ elif st.session_state.step == 2:
             with col_id:
                 id_card_cert = st.text_input("๔. เลขบัตรประชาชน", placeholder="เช่น 1150050000253")
             
+            # ที่อยู่จัดให้อยู่ในแถวเดียวกัน
             col_house, col_subdist, col_dist, col_prov = st.columns(4)
             with col_house:
                 address_cert = st.text_input("๕. บ้านเลขที่", placeholder="เช่น 31/22")
@@ -419,7 +346,7 @@ elif st.session_state.step == 2:
                 st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_cert}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # 2.4 หมวดอื่นๆ (สถานพินิจ, เอกชน)
+    # 2.3 หมวดอื่นๆ (ศาล, สถานพินิจ, เอกชน)
     # ---------------------------------------------
     else:
         st.info(f"📍 ท่านเข้าสู่หมวด **{st.session_state.category}**")
