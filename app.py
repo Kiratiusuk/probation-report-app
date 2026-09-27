@@ -57,8 +57,9 @@ if st.session_state.step == 1:
             st.session_state.step = 2; st.rerun()
     with col6:
         st.markdown("<div style='text-align: center; font-size: 50px;'>📑</div>", unsafe_allow_html=True)
-        if st.button("๕. รับรอง ม.113/114", use_container_width=True):
-            st.session_state.category = "หนังสือรับรอง"
+        # แก้ไขชื่อปุ่มหมวด 5 ตามที่ต้องการ
+        if st.button("๕. หนังสือรับรองการบำบัด(ม.113/114)", use_container_width=True):
+            st.session_state.category = "หนังสือรับรองการบำบัด"
             st.session_state.step = 2; st.rerun()
 
 # ==========================================
@@ -75,13 +76,9 @@ elif st.session_state.step == 2:
     # 🛡️ 2.1 หมวดคุมประพฤติ
     # ---------------------------------------------
     if st.session_state.category == "คุมประพฤติ":
-        
-        # เลือกเมนูย่อย นนทบุรี / จังหวัดอื่น
         sub_category = st.radio("เลือกหน่วยงานปลายทาง:", ["คุมประพฤติจังหวัดนนทบุรี", "คุมประพฤติอื่น"], horizontal=True)
         
-        # ==========================================
         # ก. คุมประพฤตินนทบุรี
-        # ==========================================
         if sub_category == "คุมประพฤติจังหวัดนนทบุรี":
             with st.container(border=True):
                 st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (จังหวัดนนทบุรี)</h5>", unsafe_allow_html=True)
@@ -117,7 +114,6 @@ elif st.session_state.step == 2:
                     else:
                         send_to = send_to_choice
                     
-                    # แก้ไขตัวเลือกสาเหตุการส่งตัวให้เหลือ 2 ข้อ
                     refer_reason_choice = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"])
                     if refer_reason_choice == "อื่นๆ (ระบุเอง)":
                         refer_reason = st.text_input("โปรดระบุสาเหตุการส่งตัว:")
@@ -170,14 +166,11 @@ elif st.session_state.step == 2:
                 except Exception as e:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name}' หรือมีข้อผิดพลาด: {str(e)}")
 
-        # ==========================================
         # ข. คุมประพฤติจังหวัดอื่น
-        # ==========================================
         elif sub_category == "คุมประพฤติอื่น":
             with st.container(border=True):
                 st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (คุมประพฤติจังหวัดอื่น)</h5>", unsafe_allow_html=True)
                 
-                # เปลี่ยน Placeholder ในช่องหน่วยงานที่ส่งมา ตัดคำว่าสำนักงานออก
                 agency_name = st.text_input("๑. หน่วยงานที่ส่งมา", placeholder="เช่น คุมประพฤติกรุงเทพมหานคร ๒")
                 month_year_other = st.text_input("๒. เดือนและปี หนังสือ", placeholder="เช่น กันยายน ๒๕๖๙", key="month_other")
                 ref_number_other = st.text_input("๓. อ้างอิงหนังสือคุมประพฤติเลขที่", placeholder="เช่น ยธ ๐๓๑๐/๘๔๖๖ (โปรดพิมพ์ให้ครบถ้วน)", key="ref_other")
@@ -210,7 +203,6 @@ elif st.session_state.step == 2:
                     else:
                         send_to_other = send_to_choice_other
                     
-                    # แก้ไขตัวเลือกสาเหตุการส่งตัวให้เหลือ 2 ข้อ
                     refer_reason_choice_other = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"], key="ref_reason_sel_other")
                     if refer_reason_choice_other == "อื่นๆ (ระบุเอง)":
                         refer_reason_txt_other = st.text_input("โปรดระบุสาเหตุการส่งตัว:", key="ref_reason_txt_other")
@@ -267,7 +259,94 @@ elif st.session_state.step == 2:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_other}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # 2.2 หมวดอื่นๆ
+    # 📑 2.2 หมวดหนังสือรับรองการบำบัด (ม.113/114) (ส่วนที่เพิ่มใหม่)
+    # ---------------------------------------------
+    elif st.session_state.category == "หนังสือรับรองการบำบัด":
+        with st.container(border=True):
+            st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (หนังสือรับรองการบำบัด)</h5>", unsafe_allow_html=True)
+            
+            # แบ่งเป็น 2 คอลัมน์สำหรับข้อมูลทั่วไป
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                month_year_cert = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน ๒๕๖๙")
+                section_cert = st.selectbox("๙. มาตรา", ["มาตรา 113", "มาตรา 114"])
+            
+            st.markdown("---")
+            st.markdown("<b>ข้อมูลผู้รับการบำบัด</b>", unsafe_allow_html=True)
+            
+            col_name, col_age, col_id = st.columns([2, 1, 2])
+            with col_name:
+                patient_name_cert = st.text_input("๒. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ บำบัด")
+            with col_age:
+                age_cert = st.text_input("๓. อายุ (ปี)", placeholder="เช่น 32")
+            with col_id:
+                id_card_cert = st.text_input("๔. เลขบัตรประชาชน", placeholder="เช่น 1150050000253")
+            
+            # ที่อยู่จัดให้อยู่ในแถวเดียวกัน
+            col_house, col_subdist, col_dist, col_prov = st.columns(4)
+            with col_house:
+                address_cert = st.text_input("๕. บ้านเลขที่", placeholder="เช่น 31/22")
+            with col_subdist:
+                sub_district_cert = st.text_input("๖. ตำบล/แขวง", placeholder="เช่น บางกระสอ")
+            with col_dist:
+                district_cert = st.text_input("๗. อำเภอ/เขต", placeholder="เช่น เมืองนนทบุรี")
+            with col_prov:
+                province_cert = st.text_input("๘. จังหวัด", placeholder="เช่น นนทบุรี")
+                
+            st.markdown("---")
+            st.markdown("<b>ระยะเวลาและผลการบำบัด</b>", unsafe_allow_html=True)
+            
+            col_start, col_end = st.columns(2)
+            with col_start:
+                start_date_cert = st.text_input("๑๐. วันที่เริ่มบำบัด", placeholder="เช่น 16 ธันวาคม 2569")
+            with col_end:
+                end_date_cert = st.text_input("๑๑. วันสิ้นสุดการบำบัด", placeholder="เช่น 10 เมษายน 2570")
+                
+            result_choice = st.selectbox("๑๒. ผลการบำบัด", ["เป็นที่น่าพอใจ", "ไม่เป็นที่น่าพอใจ", "อื่นๆ (ระบุเอง)"])
+            result_cert = ""
+            if result_choice == "อื่นๆ (ระบุเอง)":
+                result_cert = st.text_input("โปรดระบุผลการบำบัด:", placeholder="พิมพ์ผลการบำบัดที่นี่...")
+            else:
+                result_cert = result_choice
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            submit_btn_cert = st.button("📄 สร้างเอกสาร Word", type="primary", use_container_width=True)
+
+        if submit_btn_cert:
+            template_name_cert = "หนังสือรับรองการบำบัด.docx"
+            try:
+                doc = DocxTemplate(template_name_cert)
+                context_cert = {
+                    "เดือนและปีหนังสือออก": month_year_cert,
+                    "ชื่อผู้รับการบำบัด": patient_name_cert,
+                    "อายุ": age_cert,
+                    "เลขบัตรประชาชน": id_card_cert,
+                    "บ้านเลขที่": address_cert,
+                    "ตำบล": sub_district_cert,
+                    "อำเภอ": district_cert,
+                    "จังหวัด": province_cert,
+                    "มาตรา": section_cert,
+                    "วันที่เริ่มบำบัด": start_date_cert,
+                    "วันสิ้นสุดการบำบัด": end_date_cert,
+                    "ผลการบำบัด": result_cert
+                }
+                
+                doc.render(context_cert)
+                bio_cert = io.BytesIO()
+                doc.save(bio_cert)
+                
+                st.success(f"✅ สร้างเอกสารหนังสือรับรองของ {patient_name_cert} สำเร็จ!")
+                st.download_button(
+                    label="⬇️ ดาวน์โหลดไฟล์เอกสาร (Word)", data=bio_cert.getvalue(),
+                    file_name=f"หนังสือรับรอง_{section_cert}_{patient_name_cert}.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    type="primary"
+                )
+            except Exception as e:
+                st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_cert}' หรือมีข้อผิดพลาด: {str(e)}")
+
+    # ---------------------------------------------
+    # 2.3 หมวดอื่นๆ (ศาล, สถานพินิจ, เอกชน)
     # ---------------------------------------------
     else:
         st.info(f"📍 ท่านเข้าสู่หมวด **{st.session_state.category}**")
