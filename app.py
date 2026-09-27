@@ -117,7 +117,8 @@ elif st.session_state.step == 2:
                     else:
                         send_to = send_to_choice
                     
-                    refer_reason_choice = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ", "มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"])
+                    # แก้ไขตัวเลือกสาเหตุการส่งตัวให้เหลือ 2 ข้อ
+                    refer_reason_choice = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"])
                     if refer_reason_choice == "อื่นๆ (ระบุเอง)":
                         refer_reason = st.text_input("โปรดระบุสาเหตุการส่งตัว:")
                     else:
@@ -176,8 +177,8 @@ elif st.session_state.step == 2:
             with st.container(border=True):
                 st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (คุมประพฤติจังหวัดอื่น)</h5>", unsafe_allow_html=True)
                 
-                # เพิ่มช่องหน่วยงานที่ส่งมา และเปลี่ยน Placeholder ในช่องเลขหนังสือ
-                agency_name = st.text_input("๑. หน่วยงานที่ส่งมา", placeholder="เช่น สำนักงานคุมประพฤติกรุงเทพมหานคร ๒")
+                # เปลี่ยน Placeholder ในช่องหน่วยงานที่ส่งมา ตัดคำว่าสำนักงานออก
+                agency_name = st.text_input("๑. หน่วยงานที่ส่งมา", placeholder="เช่น คุมประพฤติกรุงเทพมหานคร ๒")
                 month_year_other = st.text_input("๒. เดือนและปี หนังสือ", placeholder="เช่น กันยายน ๒๕๖๙", key="month_other")
                 ref_number_other = st.text_input("๓. อ้างอิงหนังสือคุมประพฤติเลขที่", placeholder="เช่น ยธ ๐๓๑๐/๘๔๖๖ (โปรดพิมพ์ให้ครบถ้วน)", key="ref_other")
                 ref_date_other = st.text_input("๔. อ้างอิงหนังสือคุมประพฤติวันที่", placeholder="เช่น ๕ ตุลาคม ๒๕๖๙", key="date_other")
@@ -209,7 +210,8 @@ elif st.session_state.step == 2:
                     else:
                         send_to_other = send_to_choice_other
                     
-                    refer_reason_choice_other = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ", "มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"], key="ref_reason_sel_other")
+                    # แก้ไขตัวเลือกสาเหตุการส่งตัวให้เหลือ 2 ข้อ
+                    refer_reason_choice_other = st.selectbox("- สาเหตุการส่งตัว", ["บำบัดแบบผู้ป่วยนอกไม่สำเร็จ มีปัญหาด้านอารมณ์และพฤติกรรมที่อาจเป็นอันตรายเนื่องจากยาเสพติด", "อื่นๆ (ระบุเอง)"], key="ref_reason_sel_other")
                     if refer_reason_choice_other == "อื่นๆ (ระบุเอง)":
                         refer_reason_txt_other = st.text_input("โปรดระบุสาเหตุการส่งตัว:", key="ref_reason_txt_other")
                     else:
