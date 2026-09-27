@@ -6,6 +6,7 @@ import io
 st.set_page_config(page_title="ระบบงานเอกสารจิตเวช", layout="centered", page_icon="🏥")
 
 # --- CSS ตกแต่งธีมสีดำ-น้ำเงิน และรองรับหน้าจอมือถือ (Responsive) ---
+# --- CSS ตกแต่งธีมสีดำ-น้ำเงิน และรองรับหน้าจอมือถือ (Responsive) ---
 st.markdown("""
 <style>
     /* บังคับพื้นหลังสีดำ/กรมท่าเข้ม และตัวหนังสือสีสว่าง */
@@ -13,12 +14,13 @@ st.markdown("""
         background-color: #0b0f19;
         color: #e2e8f0;
     }
-    /* ปรับแต่งหัวข้อ */
+    /* ปรับแต่งหัวข้อ (เดสก์ท็อป) */
     .main-title { 
         color: #60a5fa; 
         text-align: center; 
         font-weight: bold; 
         margin-bottom: 5px; 
+        font-size: 32px;
     }
     .sub-title { 
         color: #94a3b8; 
@@ -41,8 +43,8 @@ st.markdown("""
         color: #bfdbfe;
         background-color: #0f172a;
         transition: 0.3s;
-        white-space: normal !important; /* บังคับให้ปัดบรรทัดเมื่อข้อความยาว */
-        height: auto !important; /* ให้ปุ่มขยายความสูงตามข้อความ */
+        white-space: normal !important;
+        height: auto !important;
         min-height: 50px;
         padding: 10px;
     }
@@ -75,9 +77,9 @@ st.markdown("""
 
     /* ---- CSS สำหรับหน้าจอมือถือ (จอเล็กกว่า 768px) ---- */
     @media (max-width: 768px) {
-        .main-title { font-size: 24px !important; }
+        .main-title { font-size: 20px !important; } /* ปรับลดขนาดเฉพาะมือถือไม่ให้ตกบรรทัด แต่ยังคงตัวใหญ่เด่นชัด */
         .sub-title { font-size: 14px !important; margin-bottom: 15px !important; }
-        .icon-menu { font-size: 35px !important; } /* ลดขนาดไอคอน */
+        .icon-menu { font-size: 35px !important; } 
         div.stButton > button { font-size: 14px !important; }
     }
 </style>
@@ -498,4 +500,4 @@ elif st.session_state.step == 2:
 # ==========================================
 # เครดิตด้านล่างสุดของโปรแกรม
 # ==========================================
-st.markdown("<div class='footer'>พัฒนาโดยกลุ่มงานจิตเวชและยาเสพติด โรงพยาบาลพระนั่งเกล้า</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>พัฒนาโดยกลุ่มงานจิตเวชและยาเสพติด<br>โรงพยาบาลพระนั่งเกล้า</div>", unsafe_allow_html=True)
