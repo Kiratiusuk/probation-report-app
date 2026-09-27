@@ -2,10 +2,10 @@ import streamlit as st
 from docxtpl import DocxTemplate
 import io
 
-# 1. ตั้งค่าหน้าเพจ
+# 1. ตั้งค่าหน้าเพจ (ใช้ layout="centered" จะเหมาะกับมือถือที่สุด)
 st.set_page_config(page_title="ระบบงานเอกสารจิตเวช", layout="centered", page_icon="🏥")
 
-# --- CSS ตกแต่งธีมสีดำ-น้ำเงิน (Dark Navy Elegant) ---
+# --- CSS ตกแต่งธีมสีดำ-น้ำเงิน และรองรับหน้าจอมือถือ (Responsive) ---
 st.markdown("""
 <style>
     /* บังคับพื้นหลังสีดำ/กรมท่าเข้ม และตัวหนังสือสีสว่าง */
@@ -28,13 +28,23 @@ st.markdown("""
     }
     hr { border-top: 1px solid #1e3a8a; }
     
-    /* ปรับแต่งปุ่มกดทั่วไป */
+    /* คลาสสำหรับไอคอนเมนู */
+    .icon-menu {
+        text-align: center; 
+        font-size: 50px;
+    }
+    
+    /* ปรับแต่งปุ่มกดทั่วไป ให้รองรับการขึ้นบรรทัดใหม่บนมือถือ */
     div.stButton > button {
         border-radius: 8px;
         border: 1px solid #1e3a8a;
         color: #bfdbfe;
         background-color: #0f172a;
         transition: 0.3s;
+        white-space: normal !important; /* บังคับให้ปัดบรรทัดเมื่อข้อความยาว */
+        height: auto !important; /* ให้ปุ่มขยายความสูงตามข้อความ */
+        min-height: 50px;
+        padding: 10px;
     }
     div.stButton > button:hover {
         background-color: #1e3a8a;
@@ -62,6 +72,14 @@ st.markdown("""
         margin-top: 60px;
         margin-bottom: 20px;
     }
+
+    /* ---- CSS สำหรับหน้าจอมือถือ (จอเล็กกว่า 768px) ---- */
+    @media (max-width: 768px) {
+        .main-title { font-size: 24px !important; }
+        .sub-title { font-size: 14px !important; margin-bottom: 15px !important; }
+        .icon-menu { font-size: 35px !important; } /* ลดขนาดไอคอน */
+        div.stButton > button { font-size: 14px !important; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -75,24 +93,24 @@ st.markdown("<p class='sub-title'>กลุ่มงานจิตเวชแ�
 st.markdown("<hr>", unsafe_allow_html=True)
 
 # ==========================================
-# หน้าที่ 1: เมนูหลัก 5 หมวดหมู่ (จัดเรียงใหม่ตามลำดับ)
+# หน้าที่ 1: เมนูหลัก 5 หมวดหมู่
 # ==========================================
 if st.session_state.step == 1:
     st.markdown("<h5 style='text-align: center; color: #60a5fa; margin-bottom: 20px;'>โปรดเลือกหน่วยงานหรือประเภทเอกสาร</h5>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("<div style='text-align: center; font-size: 50px;'>🛡️</div>", unsafe_allow_html=True)
+        st.markdown("<div class='icon-menu'>🛡️</div>", unsafe_allow_html=True)
         if st.button("๑. คุมประพฤติ", use_container_width=True):
             st.session_state.category = "คุมประพฤติ"
             st.session_state.step = 2; st.rerun()
     with col2:
-        st.markdown("<div style='text-align: center; font-size: 50px;'>⚖️</div>", unsafe_allow_html=True)
+        st.markdown("<div class='icon-menu'>⚖️</div>", unsafe_allow_html=True)
         if st.button("๒. ศาล", use_container_width=True):
             st.session_state.category = "ศาล"
             st.session_state.step = 2; st.rerun()
     with col3:
-        st.markdown("<div style='text-align: center; font-size: 50px;'>🏫</div>", unsafe_allow_html=True)
+        st.markdown("<div class='icon-menu'>🏫</div>", unsafe_allow_html=True)
         if st.button("๓. สถานพินิจ", use_container_width=True):
             st.session_state.category = "สถานพินิจ"
             st.session_state.step = 2; st.rerun()
@@ -100,13 +118,12 @@ if st.session_state.step == 1:
     st.write("") 
     col4, col5, col6, col7 = st.columns([1, 2, 2, 1])
     with col5:
-        st.markdown("<div style='text-align: center; font-size: 50px;'>🏢</div>", unsafe_allow_html=True)
+        st.markdown("<div class='icon-menu'>🏢</div>", unsafe_allow_html=True)
         if st.button("๔. เอกชน", use_container_width=True):
             st.session_state.category = "เอกชน"
             st.session_state.step = 2; st.rerun()
     with col6:
-        st.markdown("<div style='text-align: center; font-size: 50px;'>📑</div>", unsafe_allow_html=True)
-        # เปลี่ยนชื่อปุ่มเป็นแบบเต็มตามที่ต้องการ
+        st.markdown("<div class='icon-menu'>📑</div>", unsafe_allow_html=True)
         if st.button("๕. หนังสือรับรองผลการบำบัด(ม.113/114)", use_container_width=True):
             st.session_state.category = "หนังสือรับรองการบำบัด"
             st.session_state.step = 2; st.rerun()
@@ -118,13 +135,12 @@ elif st.session_state.step == 2:
     if st.button("⬅️ กลับหน้าเมนูหลัก"):
         st.session_state.step = 1; st.rerun()
         
-    # ปรับชื่อหมวดให้แสดงผลถูกต้องบนหน้าต่างที่ 2
     display_category = "หนังสือรับรองผลการบำบัด(ม.113/114)" if st.session_state.category == "หนังสือรับรองการบำบัด" else st.session_state.category
     st.markdown(f"<h4 style='color: #60a5fa; text-align: center;'>หมวด: {display_category}</h4>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # ---------------------------------------------
-    # 🛡️ 2.1 หมวดคุมประพฤติ (เลื่อนขึ้นมาเป็นอันดับแรก)
+    # 🛡️ 2.1 หมวดคุมประพฤติ
     # ---------------------------------------------
     if st.session_state.category == "คุมประพฤติ":
         sub_category = st.radio("เลือกหน่วยงานปลายทาง:", ["คุมประพฤติจังหวัดนนทบุรี", "คุมประพฤติอื่น"], horizontal=True)
@@ -308,7 +324,7 @@ elif st.session_state.step == 2:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_other}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # ⚖️ 2.2 หมวดศาล (เลื่อนมาเป็นอันดับที่ 2)
+    # ⚖️ 2.2 หมวดศาล
     # ---------------------------------------------
     elif st.session_state.category == "ศาล":
         with st.container(border=True):
