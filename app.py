@@ -5,14 +5,50 @@ import io
 # 1. ตั้งค่าหน้าเพจ
 st.set_page_config(page_title="ระบบงานเอกสารจิตเวช", layout="centered", page_icon="🏥")
 
-# --- CSS ตกแต่ง ---
+# --- CSS ตกแต่งธีมให้สวยงามและเป็นทางการ (บังคับสว่าง-สีกรมท่า) ---
 st.markdown("""
 <style>
-    .main-title { color: #003366; text-align: center; font-weight: bold; margin-bottom: 5px; }
-    .sub-title { color: #555555; text-align: center; font-size: 18px; margin-bottom: 30px; }
+    /* ปรับพื้นหลังของโปรแกรมให้เป็นสีสว่าง เพื่อให้สีกรมท่าเด่นขึ้น */
+    .stApp {
+        background-color: #f4f7f6;
+    }
+    /* ปรับแต่งหัวข้อ */
+    .main-title { color: #002244; text-align: center; font-weight: 800; font-size: 32px; margin-bottom: 5px; }
+    .sub-title { color: #003366; text-align: center; font-size: 18px; margin-bottom: 30px; font-weight: 600; }
     hr { border-top: 2px solid #003366; }
-    div.stButton > button { border-radius: 8px; border: 1px solid #003366; color: #003366; background-color: #ffffff; }
-    div.stButton > button:hover { background-color: #003366; color: white; }
+    
+    /* ปรับแต่งปุ่มกด */
+    div.stButton > button {
+        border-radius: 8px;
+        border: 2px solid #003366;
+        color: #003366;
+        background-color: #ffffff;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: #003366;
+        color: white;
+        transform: scale(1.02);
+    }
+    /* ปรับแต่งปุ่มหลัก (ปุ่มสร้างเอกสาร) ให้เป็นทึบ */
+    div.stButton > button[kind="primary"] {
+        background-color: #003366;
+        color: white;
+        border: none;
+    }
+    div.stButton > button[kind="primary"]:hover {
+        background-color: #001a33;
+    }
+    
+    /* ส่วนของเครดิตด้านล่างสุด */
+    .footer {
+        text-align: center;
+        font-size: 13px;
+        color: #666666;
+        margin-top: 60px;
+        margin-bottom: 20px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -57,7 +93,6 @@ if st.session_state.step == 1:
             st.session_state.step = 2; st.rerun()
     with col6:
         st.markdown("<div style='text-align: center; font-size: 50px;'>📑</div>", unsafe_allow_html=True)
-        # แก้ไขชื่อปุ่มหมวด 5 ตามที่ต้องการ
         if st.button("๕. หนังสือรับรองการบำบัด(ม.113/114)", use_container_width=True):
             st.session_state.category = "หนังสือรับรองการบำบัด"
             st.session_state.step = 2; st.rerun()
@@ -73,12 +108,95 @@ elif st.session_state.step == 2:
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # ---------------------------------------------
-    # 🛡️ 2.1 หมวดคุมประพฤติ
+    # ⚖️ 2.1 หมวดศาล (แก้ไขล่าสุด)
     # ---------------------------------------------
-    if st.session_state.category == "คุมประพฤติ":
+    if st.session_state.category == "ศาล":
+        with st.container(border=True):
+            st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (ศาล)</h5>", unsafe_allow_html=True)
+            
+            month_year_court = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน 2569")
+            ref_number_court = st.text_input("๒. เลขหนังสือศาล", placeholder="เช่น (ป) ๑๗๒๑")
+            
+            # แก้ไขชื่อหัวข้อที่ 3 ตามที่ร้องขอ
+            ref_date_court = st.text_input("๓. หนังสือศาลลงวันที่", placeholder="เช่น ๒๐ พฤษภาคม ๒๕๖๘")
+            patient_name_court = st.text_input("๔. ชื่อผู้รับการบำบัด", placeholder="เช่น นายตั้งใจ หยุดเสพ")
+            
+            st.markdown("---")
+            # เพิ่ม index=None เพื่อให้ช่องเริ่มต้นเป็นค่าว่าง
+            section_court = st.selectbox("๕. มาตรา", [
+                "166", 
+                "168", 
+                "166 ประกอบประมวลกฎหมายอาญามาตรา ๕๖", 
+                "168 ประกอบประมวลกฎหมายอาญามาตรา ๕๖"
+            ], index=None, placeholder="-- โปรดเลือกมาตรา --")
+            
+            st.markdown("---")
+            # เพิ่ม index=None เพื่อให้ช่องเริ่มต้นเป็นค่าว่าง
+            status_court = st.selectbox("๖. สถานะการบำบัด", [
+                "บำบัดครบ", 
+                "บำบัดไม่ครบ", 
+                "ไม่มารายงานตัว", 
+                "ขอย้ายสถานบำบัด"
+            ], index=None, placeholder="-- โปรดเลือกสถานะการบำบัด --")
+            
+            num_times_court, hospital_name_court, reason_court = "", "", ""
+            
+            if status_court == "ขอย้ายสถานบำบัด":
+                st.info("ระบุข้อมูลการย้ายสถานบำบัด:")
+                num_times_court = st.text_input("- ได้เข้ารับการฟื้นฟูฯ จำนวนกี่ครั้ง (ใส่เฉพาะตัวเลข)", placeholder="เช่น ๔", key="num_court")
+                hospital_name_court = st.text_input("- ขอย้ายไปที่ไหน (ชื่อ รพ. หรือ สถานที่บำบัด และ จังหวัด)", placeholder="เช่น โรงพยาบาลสมเด็จพระเจ้าตากสินมหาราช จังหวัดตาก", key="hosp_court")
+                reason_court = st.text_input("- เนื่องจากอะไร", placeholder="เช่น ย้ายสถานที่ทำงาน", key="reason_court")
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            submit_btn_court = st.button("📄 สร้างเอกสาร Word", type="primary", use_container_width=True)
+
+        if submit_btn_court:
+            # ตรวจสอบว่าผู้ใช้เลือกข้อมูลในข้อ 5 และ 6 หรือยัง
+            if section_court is None or status_court is None:
+                st.warning("⚠️ โปรดเลือก 'มาตรา' และ 'สถานะการบำบัด' ให้ครบถ้วนก่อนกดสร้างเอกสารครับ")
+            else:
+                status_text_court = ""
+                if status_court == "บำบัดครบ":
+                    status_text_court = "ได้มารายงานตัวเพื่อเข้ารับการบำบัดรักษาและเข้ารับการฟื้นฟูฯ ครบตามโปรแกรมที่กำหนด"
+                elif status_court == "บำบัดไม่ครบ":
+                    status_text_court = "ได้มารายงานตัวเพื่อเข้ารับการบำบัดรักษาและเข้ารับการฟื้นฟูฯ แต่ไม่ครบตามโปรแกรมที่กำหนด"
+                elif status_court == "ไม่มารายงานตัว":
+                    status_text_court = "ไม่ได้มารายงานตัวเพื่อเข้ารับการรักษาและเข้ารับการฟื้นฟูฯ ตามโปรมแกรมที่กำหนด"
+                elif status_court == "ขอย้ายสถานบำบัด":
+                    status_text_court = f"ได้เข้ารับการฟื้นฟูฯ จำนวน {num_times_court} ครั้ง และแจ้งขอย้ายสถานบำบัดไปยัง{hospital_name_court} เนื่องจาก{reason_court}"
+                
+                template_name_court = "ศาลรวม.docx"
+                try:
+                    doc = DocxTemplate(template_name_court)
+                    context_court = {
+                        "เดือนและปีหนังสือออก": month_year_court,
+                        "เลขหนังสือศาล": ref_number_court,
+                        "ลงวันที่": ref_date_court,
+                        "ชื่อผู้รับการบำบัด": patient_name_court,
+                        "มาตรา": section_court,
+                        "สถานะการบำบัด": status_text_court
+                    }
+                    
+                    doc.render(context_court)
+                    bio_court = io.BytesIO()
+                    doc.save(bio_court)
+                    
+                    st.success(f"✅ สร้างเอกสาร '{status_court}' ของ {patient_name_court} สำเร็จ!")
+                    st.download_button(
+                        label="⬇️ ดาวน์โหลดไฟล์เอกสาร (Word)", data=bio_court.getvalue(),
+                        file_name=f"ศาล_{status_court}_{patient_name_court}.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        type="primary"
+                    )
+                except Exception as e:
+                    st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_court}' หรือมีข้อผิดพลาด: {str(e)}")
+
+    # ---------------------------------------------
+    # 🛡️ 2.2 หมวดคุมประพฤติ
+    # ---------------------------------------------
+    elif st.session_state.category == "คุมประพฤติ":
         sub_category = st.radio("เลือกหน่วยงานปลายทาง:", ["คุมประพฤติจังหวัดนนทบุรี", "คุมประพฤติอื่น"], horizontal=True)
         
-        # ก. คุมประพฤตินนทบุรี
         if sub_category == "คุมประพฤติจังหวัดนนทบุรี":
             with st.container(border=True):
                 st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (จังหวัดนนทบุรี)</h5>", unsafe_allow_html=True)
@@ -166,7 +284,6 @@ elif st.session_state.step == 2:
                 except Exception as e:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name}' หรือมีข้อผิดพลาด: {str(e)}")
 
-        # ข. คุมประพฤติจังหวัดอื่น
         elif sub_category == "คุมประพฤติอื่น":
             with st.container(border=True):
                 st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (คุมประพฤติจังหวัดอื่น)</h5>", unsafe_allow_html=True)
@@ -259,13 +376,12 @@ elif st.session_state.step == 2:
                     st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_other}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # 📑 2.2 หมวดหนังสือรับรองการบำบัด (ม.113/114) (ส่วนที่เพิ่มใหม่)
+    # 📑 2.3 หมวดหนังสือรับรองการบำบัด (ม.113/114)
     # ---------------------------------------------
     elif st.session_state.category == "หนังสือรับรองการบำบัด":
         with st.container(border=True):
             st.markdown("<h5 style='color: #003366;'>บันทึกข้อมูล (หนังสือรับรองการบำบัด)</h5>", unsafe_allow_html=True)
             
-            # แบ่งเป็น 2 คอลัมน์สำหรับข้อมูลทั่วไป
             col1, col2 = st.columns([1, 1])
             with col1:
                 month_year_cert = st.text_input("๑. เดือนและปี หนังสือออก", placeholder="เช่น กันยายน ๒๕๖๙")
@@ -282,7 +398,6 @@ elif st.session_state.step == 2:
             with col_id:
                 id_card_cert = st.text_input("๔. เลขบัตรประชาชน", placeholder="เช่น 1150050000253")
             
-            # ที่อยู่จัดให้อยู่ในแถวเดียวกัน
             col_house, col_subdist, col_dist, col_prov = st.columns(4)
             with col_house:
                 address_cert = st.text_input("๕. บ้านเลขที่", placeholder="เช่น 31/22")
@@ -346,8 +461,13 @@ elif st.session_state.step == 2:
                 st.error(f"❌ ไม่พบไฟล์ต้นแบบ '{template_name_cert}' หรือมีข้อผิดพลาด: {str(e)}")
 
     # ---------------------------------------------
-    # 2.3 หมวดอื่นๆ (ศาล, สถานพินิจ, เอกชน)
+    # 2.4 หมวดอื่นๆ (สถานพินิจ, เอกชน)
     # ---------------------------------------------
     else:
         st.info(f"📍 ท่านเข้าสู่หมวด **{st.session_state.category}**")
         st.write("ฟอร์มในหมวดหมู่นี้อยู่ระหว่างการพัฒนาช่องกรอกข้อมูลครับ")
+
+# ==========================================
+# เครดิตด้านล่างสุดของโปรแกรม
+# ==========================================
+st.markdown("<div class='footer'>พัฒนาโดยกลุ่มงานจิตเวชและยาเสพติด</div>", unsafe_allow_html=True)
